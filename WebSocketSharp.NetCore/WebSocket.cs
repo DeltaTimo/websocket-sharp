@@ -48,6 +48,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using WebSocketSharp.NetCore.Net;
 using WebSocketSharp.NetCore.Net.WebSockets;
 
@@ -1527,7 +1528,7 @@ namespace WebSocketSharp.NetCore
       ThreadPool.QueueUserWorkItem (state => messages (e));
     }
 
-    private void open ()
+    private async void open ()
     {
       _inMessage = true;
       startReceiving ();
@@ -1549,7 +1550,7 @@ namespace WebSocketSharp.NetCore
         e = _messageEventQueue.Dequeue ();
       }
 
-      _message.BeginInvoke (e, ar => _message.EndInvoke (ar), null);
+      await Task.Run(() => _message(e));
     }
 
     private bool ping (byte[] data)
